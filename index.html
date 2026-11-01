@@ -93,14 +93,6 @@
   <div class="eyebrow">Who is actually on the ballot</div><h2>CANDIDATE <b>SEARCH</b></h2><p class="section-intro">Search the IEC's certified candidate lists by name, party or municipality. Load the list once; it stays in this browser.</p>
   <div class="notice"><b>Source:</b> IEC "LGE 2026 Candidate Lists, 23 Oct 2026", published as supplemented after the Constitutional Court order in ANC v Electoral Commission (CCT 282/26): 139,060 candidate entries, 521 parties, 257 municipalities. ID numbers are left out here. Some names appear against more than one ward in the source file, so confirm any individual entry against the IEC before relying on it. The list loads automatically if <code>candidates_lge2026.csv</code> sits next to this page; otherwise import a CSV below. The IEC certified 136,790 candidates on 16 September 2026. The importer looks for columns containing party, municipality, ward and name. Always confirm a candidate against the IEC's own lists.</div>
   <div class="tools"><label class="btn secondary" for="candFile">Import IEC candidate CSV</label><input id="candFile" class="hidden" type="file" accept=".csv,.txt"><span id="candStatus" class="small"></span></div>
-  
-  <!-- AI Smart Match Helper Bar added above input fields -->
-  <div class="tools" style="background:#222; border:1px solid var(--yellow); padding: 12px; align-items: center;">
-    <span style="font-size:0.75rem; font-weight:900; color:var(--yellow); text-transform:uppercase;">✨ AI Assistant:</span>
-    <input id="aiPromptInput" class="field" style="flex: 1; min-width: 250px;" placeholder="e.g., 'Show DA candidates in Buffalo City' or 'Who is running in Nelson Mandela Bay'">
-    <button class="btn" type="button" id="aiRunBtn">AI Search Help</button>
-  </div>
-
   <div class="tools"><input id="cqName" class="field" placeholder="Candidate name"><input id="cqParty" class="field" placeholder="Party"><input id="cqMuni" class="field" placeholder="Municipality"></div>
   <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Name</th><th>Party</th><th>Municipality</th><th>Ward / list</th></tr></thead><tbody id="candBody"></tbody></table></div>
 </section>
@@ -213,7 +205,7 @@ const starterReceipts = [];
 let parties = load("tpc_parties3",starterParties), claims = load("tpc_claims",starterClaims), receipts = load("tpc_receipts",starterReceipts);
 function load(k,fallback){try{const v=localStorage.getItem(k);return v?JSON.parse(v):fallback.map(x=>({...x}));}catch(e){return fallback.map(x=>({...x}));}}
 function save(){localStorage.setItem("tpc_parties3",JSON.stringify(parties));localStorage.setItem("tpc_claims",JSON.stringify(claims));localStorage.setItem("tpc_receipts",JSON.stringify(receipts));}
-function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&","<":"<",">":">",'"':""","'":"'"}[c]));}
+function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function renderParties(){let q=document.getElementById("partySearch").value.toLowerCase(),p=document.getElementById("provinceFilter").value,sort=document.getElementById("partySort").value;let list=parties.filter(x=>(x.name+" "+x.short+" "+(x.leader||"")).toLowerCase().includes(q)&&(!p||x.province===p));list.sort((a,b)=>sort==="az"?a.name.localeCompare(b.name):b.name.localeCompare(a.name));document.getElementById("partyGrid").innerHTML=list.length?list.map(x=>`<article class="card party-card">${x.logo?`<div><img class="party-logo" src="${esc(x.logo)}" alt="${esc(x.short)} logo" loading="lazy" onerror="this.outerHTML='<div class=party-mark>${esc(x.short)}</div>'"><div class="logo-credit">${esc(x.logoCredit||"")}</div></div>`:`<div class="party-mark">${esc(x.short)}</div>`}<div><span class="tag demo">${esc(x.status||"Research required")}</span><h3>${esc(x.name)}</h3><p>${esc(x.summary)}</p></div><div class="card-bottom"><span class="small">${esc(x.province||"Coverage not specified")}</span><button class="btn secondary" onclick="openParty('${esc(x.id)}')">Explore profile ↗</button></div></article>`).join(""):`<div class="empty" style="grid-column:1/-1">No matching party. Try another search.</div>`;}
 function openParty(id){let p=parties.find(x=>x.id===id);if(!p)return;document.getElementById("modalTitle").textContent=p.name;document.getElementById("modalMeta").textContent=`${p.short} · ${p.province||"Coverage not specified"} · ${p.status||"Research required"}`;let sections={Overview:p.summary,Leadership:p.leader||"Leadership details not yet researched and verified.",Candidates:p.candidates||"Candidate lists must be checked against current IEC records for each municipality.",Promises:p.promises,Track_record:p.track,Controversies:p.controversies,Political_exchanges:p.claims,Sources:(p.sources||[]).map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label||s.url)}</a>`).join("<br>")||"No sources added yet."};let tabs=document.getElementById("profileTabs");tabs.innerHTML=Object.keys(sections).map((k,i)=>`<button class="${i===0?"active":""}" data-key="${k}">${k.replaceAll("_"," ")}</button>`).join("");function show(k){document.querySelectorAll("#profileTabs button").forEach(b=>b.classList.toggle("active",b.dataset.key===k));let v=sections[k]||"";document.getElementById("profileContent").innerHTML=`<h3>${k.replaceAll("_"," ")}</h3><p>${v.includes("<a ")?v:esc(v).replace(/\n/g,"<br>")}</p><p class="legal">Editorial status: ${esc(p.status||"Research required")}. Factual content requires a dated source and an update record.</p>`;}tabs.querySelectorAll("button").forEach(b=>b.onclick=()=>show(b.dataset.key));show("Overview");document.getElementById("partyModal").classList.add("open");}
 document.getElementById("modalClose").onclick=()=>document.getElementById("partyModal").classList.remove("open");
@@ -290,42 +282,6 @@ function parseCSV(t){const rows=[];let r=[],f="",q=false;for(let i=0;i<t.length;
 function mapCands(rows){const h=rows[0].map(x=>x.toLowerCase().trim());const ix=re=>h.findIndex(x=>re.test(x));const ip=ix(/party/),im=ix(/municip/),iw=ix(/ward|list|type/);const inm=h.map((x,i)=>/name|surname|candidate/.test(x)&&!/party|municip|ward/.test(x)?i:-1).filter(i=>i>=0);if(ip<0||!inm.length)throw Error("Could not find party and name columns. Headers found: "+rows[0].join(", "));return rows.slice(1).filter(r=>r.length>1).map(r=>[inm.map(i=>r[i]).join(" ").trim(),r[ip]||"",im>=0?r[im]||"":"",iw>=0?r[iw]||"":""]);}
 function renderCands(){const a=document.getElementById("cqName").value.toLowerCase(),b=document.getElementById("cqParty").value.toLowerCase(),c=document.getElementById("cqMuni").value.toLowerCase();const body=document.getElementById("candBody");if(!CANDS.length){body.innerHTML='<tr><td colspan="4" class="small">No candidate list imported yet.</td></tr>';return;}if(!(a||b||c)){body.innerHTML=`<tr><td colspan="4" class="small">${CANDS.length.toLocaleString("en-ZA")} candidates loaded. Type to search.</td></tr>`;return;}const out=[];for(const r of CANDS){if((!a||r[0].toLowerCase().includes(a))&&(!b||r[1].toLowerCase().includes(b))&&(!c||r[2].toLowerCase().includes(c))){out.push(r);if(out.length>=100)break;}}body.innerHTML=out.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${/^\d{1,4}$/.test(r[3])?"PR list position "+esc(r[3]):"Ward "+esc(r[3])}</td></tr>`).join("")||'<tr><td colspan="4" class="small">No match (showing up to 100 results).</td></tr>';}
 ["cqName","cqParty","cqMuni"].forEach(id=>document.getElementById(id).addEventListener("input",renderCands));
-
-// AI Assistant Feature Implementation for Candidate Search
-const aiRunBtn = document.getElementById("aiRunBtn");
-if (aiRunBtn) {
-  aiRunBtn.onclick = () => {
-    const promptText = document.getElementById("aiPromptInput").value.toLowerCase();
-    if(!promptText) return;
-    
-    const partiesList = ["anc", "da", "eff", "mk", "ifp", "actionsa", "pa", "ff+", "udm", "acdp"];
-    let detectedParty = "";
-    for(let p of partiesList) {
-      if(promptText.includes(p)) { detectedParty = p.toUpperCase(); break; }
-    }
-    if(promptText.includes("democratic alliance")) detectedParty = "DEMOCRATIC ALLIANCE";
-    if(promptText.includes("african national congress")) detectedParty = "AFRICAN NATIONAL CONGRESS";
-    if(promptText.includes("economic freedom fighters")) detectedParty = "ECONOMIC FREEDOM FIGHTERS";
-
-    let detectedMuni = "";
-    if(promptText.includes("buffalo city") || promptText.includes("buf")) detectedMuni = "Buffalo City";
-    else if(promptText.includes("nelson mandela bay") || promptText.includes("nmb")) detectedMuni = "Nelson Mandela Bay";
-    else if(promptText.includes("johannesburg") || promptText.includes("joburg")) detectedMuni = "Johannesburg";
-    else if(promptText.includes("tshwane")) detectedMuni = "Tshwane";
-    else if(promptText.includes("capetown") || promptText.includes("cape town")) detectedMuni = "Cape Town";
-    else if(promptText.includes("ethekwini") || promptText.includes("durban")) detectedMuni = "eThekwini";
-    else {
-      let clean = promptText.replace(/show|me|candidates|candidate|for|the|in|all|party|who|is|running/g,"").trim();
-      if(detectedParty) clean = clean.replace(detectedParty.toLowerCase(),"").trim();
-      if(clean.length > 2) detectedMuni = clean.charAt(0).toUpperCase() + clean.slice(1);
-    }
-
-    if(detectedMuni) document.getElementById("cqMuni").value = detectedMuni;
-    if(detectedParty) document.getElementById("cqParty").value = detectedParty;
-    renderCands();
-  };
-}
-
 document.getElementById("candFile").onchange=async e=>{const f=e.target.files[0];if(!f)return;const st=document.getElementById("candStatus");st.textContent="Reading file...";try{CANDS=mapCands(parseCSV(await f.text()));await candSave(CANDS);st.textContent=CANDS.length.toLocaleString("en-ZA")+" candidates imported and saved in this browser.";renderCands();}catch(err){st.textContent="Import failed: "+err.message;}};
 candLoad().then(r=>{CANDS=r;if(r.length)document.getElementById("candStatus").textContent=r.length.toLocaleString("en-ZA")+" candidates loaded from this browser.";renderCands();});
 
