@@ -28,7 +28,7 @@
   <p class="brand">THE POLITICAL <span>CIRCUS.</span></p>
   <p class="tagline">South African politics. Without a political science degree.</p>
   <nav class="nav" aria-label="Main navigation">
-    <a href="#election">Election centre</a><a href="#parties">The line-up</a><a href="#promises">The promises</a><a href="#he-said">He said / she said</a><a href="#receipts">The receipts</a><a href="#local">Your municipality</a><a href="#about">How we work</a>
+    <a href="#election">Election centre</a><a href="#parties">The line-up</a><a href="#promises">The promises</a><a href="#candidates">Candidates</a><a href="#he-said">He said / she said</a><a href="#receipts">The receipts</a><a href="#local">Your municipality</a><a href="#about">How we work</a>
   </nav>
 </header>
 <main>
@@ -89,7 +89,7 @@
   <div id="manGrid" class="grid"></div>
 </section>
 
-<!-- CANDIDATE SEARCH SECTION WITH GUIDED AI PLACEHOLDER -->
+<!-- CANDIDATE SEARCH SECTION -->
 <section class="wrap section" id="candidates">
   <div class="eyebrow">Who is actually on the ballot</div><h2>CANDIDATE <b>SEARCH</b></h2>
   <p class="section-intro">Input your municipality or town and party below. If only a municipality or town is given, all party candidates will be listed. If a party is also input, only the selected area and candidate(s) will be shown[cite: 5].</p>
@@ -98,28 +98,24 @@
     <b>Source:</b> IEC "LGE 2026 Candidate Lists, 23 Oct 2026". The list loads automatically if <code>candidates_lge2026.csv</code> sits next to this page; otherwise import a CSV below.
   </div>
   
-  <!-- File Import Tools -->
   <div class="tools">
     <label class="btn secondary" for="candFile">Import IEC candidate CSV</label>
     <input id="candFile" class="hidden" type="file" accept=".csv,.txt">
     <span id="candStatus" class="small"></span>
   </div>
 
-  <!-- AI Smart Match Bar with Example Placeholder Guidance -->
   <div class="tools" style="background:#222; border:1px solid var(--yellow); padding: 12px; align-items: center;">
     <span style="font-size:0.75rem; font-weight:900; color:var(--yellow); text-transform:uppercase;">✨ AI Assistant:</span>
     <input id="aiPromptInput" class="field" style="flex: 1; min-width: 250px;" placeholder="e.g., 'Show DA candidates in Buffalo City' or 'Who is running in Nelson Mandela Bay'">
     <button class="btn" type="button" id="aiRunBtn">AI Search Help</button>
   </div>
 
-  <!-- User Prompt Inputs for Municipality/Town and Party -->
   <div class="tools">
     <input id="cqMuni" class="field" placeholder="Enter municipality name or town..." style="flex:1;">
     <input id="cqParty" class="field" placeholder="Enter political party (optional)..." style="flex:1;">
     <input id="cqName" class="field" placeholder="Filter by candidate name (optional)..." style="flex:1;">
   </div>
 
-  <!-- Results Table Box Below -->
   <div class="tbl-wrap">
     <table class="tbl">
       <thead>
@@ -297,7 +293,7 @@ setInterval(async()=>{if(FEEDS.news)try{showNews(await pull(FEEDS.news),false)}c
 let evidence=load("tpc_evidence",[]);
 function ytId(u){try{const x=new URL(u);if(x.hostname=="youtu.be")return x.pathname.slice(1);if(/youtube\.com$/.test(x.hostname))return x.searchParams.get("v")||(x.pathname.match(/\/(embed|shorts|live)\/([\w-]{11})/)||[])[2]||"";}catch(e){}return"";}
 function renderEvidence(){$("evList").innerHTML=evidence.length?evidence.map((v,i)=>{const id=ytId(v.url);return `<article class="card"><span class="lbl ${/Unverified/.test(v.status)?"unv":"off"}">${esc(v.status)}</span><h3>${esc(v.title)}</h3><p class="small">${esc(v.who)}</p>${id?`<div class="vid"><iframe src="https://www.youtube-nocookie.com/embed/${esc(id)}?start=${Number(v.t)||0}" title="${esc(v.title)}" loading="lazy" allowfullscreen></iframe></div>`:'<div class="notice">Could not read a video ID from that link.</div>'}<p>${esc(v.note)}</p><a href="${esc(v.url)}" target="_blank" rel="noopener">Original on YouTube ↗</a> <button class="btn danger" onclick="evidence.splice(${i},1);localStorage.setItem('tpc_evidence',JSON.stringify(evidence));renderEvidence()">Remove</button></article>`}).join(""):'<div class="empty" style="grid-column:1/-1">No evidence items yet. Add one from an official channel above.</div>';}
-$("evForm").onsubmit=e=>{e.preventDefault();evidence.push(Object.fromEntries(new FormData(e.target)));localStorage.setItem("tpc_evidence",JSON.stringify(evidence));e.target.reset();renderEvidence();};
+$("evForm").onsubmit=e=>{e.preventDefault();evidence.push(Object.fromEntries(new FormData(e.target)));localStorage.setItem('tpc_evidence',JSON.stringify(evidence));e.target.reset();renderEvidence();};
 renderEvidence();
 
 /* ===== MANIFESTOS ===== */
