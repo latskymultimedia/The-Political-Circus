@@ -89,12 +89,50 @@
   <div id="manGrid" class="grid"></div>
 </section>
 
+<!-- CANDIDATE SEARCH SECTION WITH GUIDED AI PLACEHOLDER -->
 <section class="wrap section" id="candidates">
-  <div class="eyebrow">Who is actually on the ballot</div><h2>CANDIDATE <b>SEARCH</b></h2><p class="section-intro">Search the IEC's certified candidate lists by name, party or municipality. Load the list once; it stays in this browser.</p>
-  <div class="notice"><b>Source:</b> IEC "LGE 2026 Candidate Lists, 23 Oct 2026", published as supplemented after the Constitutional Court order in ANC v Electoral Commission (CCT 282/26): 139,060 candidate entries, 521 parties, 257 municipalities. ID numbers are left out here. Some names appear against more than one ward in the source file, so confirm any individual entry against the IEC before relying on it. The list loads automatically if <code>candidates_lge2026.csv</code> sits next to this page; otherwise import a CSV below. The IEC certified 136,790 candidates on 16 September 2026. The importer looks for columns containing party, municipality, ward and name. Always confirm a candidate against the IEC's own lists.</div>
-  <div class="tools"><label class="btn secondary" for="candFile">Import IEC candidate CSV</label><input id="candFile" class="hidden" type="file" accept=".csv,.txt"><span id="candStatus" class="small"></span></div>
-  <div class="tools"><input id="cqName" class="field" placeholder="Candidate name"><input id="cqParty" class="field" placeholder="Party"><input id="cqMuni" class="field" placeholder="Municipality"></div>
-  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Name</th><th>Party</th><th>Municipality</th><th>Ward / list</th></tr></thead><tbody id="candBody"></tbody></table></div>
+  <div class="eyebrow">Who is actually on the ballot</div><h2>CANDIDATE <b>SEARCH</b></h2>
+  <p class="section-intro">Input your municipality or town and party below. If only a municipality or town is given, all party candidates will be listed. If a party is also input, only the selected area and candidate(s) will be shown[cite: 5].</p>
+  
+  <div class="notice">
+    <b>Source:</b> IEC "LGE 2026 Candidate Lists, 23 Oct 2026". The list loads automatically if <code>candidates_lge2026.csv</code> sits next to this page; otherwise import a CSV below.
+  </div>
+  
+  <!-- File Import Tools -->
+  <div class="tools">
+    <label class="btn secondary" for="candFile">Import IEC candidate CSV</label>
+    <input id="candFile" class="hidden" type="file" accept=".csv,.txt">
+    <span id="candStatus" class="small"></span>
+  </div>
+
+  <!-- AI Smart Match Bar with Example Placeholder Guidance -->
+  <div class="tools" style="background:#222; border:1px solid var(--yellow); padding: 12px; align-items: center;">
+    <span style="font-size:0.75rem; font-weight:900; color:var(--yellow); text-transform:uppercase;">✨ AI Assistant:</span>
+    <input id="aiPromptInput" class="field" style="flex: 1; min-width: 250px;" placeholder="e.g., 'Show DA candidates in Buffalo City' or 'Who is running in Nelson Mandela Bay'">
+    <button class="btn" type="button" id="aiRunBtn">AI Search Help</button>
+  </div>
+
+  <!-- User Prompt Inputs for Municipality/Town and Party -->
+  <div class="tools">
+    <input id="cqMuni" class="field" placeholder="Enter municipality name or town..." style="flex:1;">
+    <input id="cqParty" class="field" placeholder="Enter political party (optional)..." style="flex:1;">
+    <input id="cqName" class="field" placeholder="Filter by candidate name (optional)..." style="flex:1;">
+  </div>
+
+  <!-- Results Table Box Below -->
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Party</th>
+          <th>Municipality</th>
+          <th>Ward / list</th>
+        </tr>
+      </thead>
+      <tbody id="candBody"></tbody>
+    </table>
+  </div>
 </section>
 
 <section class="wrap section" id="he-said">
@@ -148,9 +186,7 @@
 <div class="modal-backdrop" id="partyModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal"><button class="close" id="modalClose" aria-label="Close profile">✕ CLOSE</button><span class="tag demo">Profile / research status</span><h2 id="modalTitle"></h2><div id="modalMeta" class="small"></div><div class="tabs" id="profileTabs"></div><div class="modal-content" id="profileContent"></div></div></div>
 
 <script>
-
 const U={tl:"https://www.timeslive.co.za/politics/2026-08-23-anc-unveils-6-point-plan-for-2026-local-elections/",bdI:"https://www.businessday.co.za/news/2026-08-23-elections-2026-anc-vows-to-insource-municipal-services-cut-tenderpreneurs/",dmA:"https://dailymaverick.co.za/article/2026-08-23-clock-it-anc-reheats-old-election-promises-in-2026-manifesto",enA:"https://enca.com/news-top-stories/broken-services-accountability-ancs-manifesto-promises-municipal-renewal",bdD:"https://www.businessday.co.za/politics/2026-08-08-da-promises-ordinary-life-as-hill-lewis-puts-municipalities-at-heart-of-election-pitch/",stD:"https://sundaytribune.co.za/news/2026-08-09-das-bold-manifesto-tackling-corruption-and-improving-municipal-governance/",bdP:"https://www.businessday.co.za/politics/2026-08-08-da-plans-to-allow-private-sector-firms-to-provide-municipal-services/",daP:"https://www.da.org.za/policy/2026-local-government-manifesto",ewE:"https://www.ewn.co.za/malema-promises-direct-municipal-insourcing-at-eff-manifesto-launch/",ioE:"https://iol.co.za/news/politics/2026-07-30-eff-promises-24-hour-water-leak-repairs-and-free-basic-services-in-election-pitch/",dmE:"https://www.dailymaverick.co.za/article/2026-07-26-eff-celebrates-13-years-with-manifesto-focused-on-youth-issues-and-basic-services/",enI:"https://www.enca.com/news-top-stories-videos/ifp-puts-water-heart-election-plan",ewI:"https://www.ewn.co.za/ifp-says-its-fileding-young-people-ahead-of-local-govt-elections/",dmI:"https://dailymaverick.co.za/article/2026-10-05-manifesto-test-ifp-offers-more-financial-support-for-traditional-leaders",bkA:"https://briefly.co.za/politics/254307-actionsa-launches-election-manifesto-crime-law-enforcement-centre/",enAs:"https://www.enca.com/news/basic-service-delivery-not-enough-actionsa",ewA:"https://ewn.co.za/2026/09/26/actionsa-vows-to-turn-dreams-of-south-africans-into-action-in-election-manifesto",dmPA:"https://dailymaverick.co.za/article/2026-10-18-pa-promises-debt-write-offs-and-a-3-month-rates-holiday",poFF:"https://www.polity.org.za/article/vf-plus-municipal-elections-manifesto-2026-2026-09-15",sbFF:"https://www.sabcnews.com/sabcnews/ff-plus-puts-municipal-reform-at-the-heart-of-election-manifesto/",bkFF:"https://briefly.co.za/politics/253211-ff-rules-coalitions-eff-mk-party-pac-november-elections/",poMK:"https://www.polity.org.za/article/mkp-the-peoples-mandate-2026-local-government-election-2026-10-20",bdMK:"https://www.businessday.co.za/politics/2026-10-26-news-analysis-mk-party-gains-in-kzn-would-test-zumas-promise-to-fix-local-government/",ioMK:"https://www.iol.co.za/news/politics/bongani-baloyi-named-mk-partys-joburg-candidate-as-other-metro-contenders-unveiled-c27f888e-98d0-4958-b99d-ca0bf3c7d1d9",dmUDM:"https://www.dailymaverick.co.za/article/2026-09-04-manifesto-test-udm-promises-to-maintain-maintain-maintain",gov:"https://www.gov.za/news/media-statements/electoral-commission-certifies-136-790-candidates-contest-2026-local",tlW:"https://www.timeslive.co.za/politics/2026-09-18-certified-this-party-has-a-candidate-in-all-4485-wards/",dmX:"https://dailymaverick.co.za/article/2026-09-16-iec-finalises-ballot-while-anc-faces-exclusion-in-six-municipalities/",bdX:"https://www.businessday.co.za/news/2026-09-16-anc-to-appeal-electoral-court-ruling-as-iec-finalises-candidate-lists/",afc:"https://www.polity.org.za/article/what-south-africas-major-parties-are-promising-voters-in-the-2026-local-elections-2026-09-25"};
-/* points: [text, tag]  tags: svc=water/electricity/roads, gov=governance & corruption, job=jobs & economy, saf=crime & safety, hou=housing & land, mon=billing, debt & rates */
 const MAN=[
 {id:"anc",name:"African National Congress",short:"ANC",leader:"Cyril Ramaphosa (president)",title:"Masakhe: Let Us Build",launched:"23 Aug 2026, Diepsloot, Gauteng",official:"",
  pts:[["Six action areas with delivery deadlines ranging from 100 days to five years","gov"],["Every ANC local representative to sign a public performance agreement and a code of ethical conduct, with a tracking mechanism so councillors account for delivery","gov"],["Ring-fence electricity revenue for maintenance; minister Ramokgopa mentioned an expected 8% budget allocation","svc"],["Digitise municipal business services and speed up planning approvals within five years","job"],["A monitored camera and lighting plan for every identified crime hotspot","saf"],["Insource municipal services and curb tenderpreneur contracts","gov"]],
@@ -205,7 +241,7 @@ const starterReceipts = [];
 let parties = load("tpc_parties3",starterParties), claims = load("tpc_claims",starterClaims), receipts = load("tpc_receipts",starterReceipts);
 function load(k,fallback){try{const v=localStorage.getItem(k);return v?JSON.parse(v):fallback.map(x=>({...x}));}catch(e){return fallback.map(x=>({...x}));}}
 function save(){localStorage.setItem("tpc_parties3",JSON.stringify(parties));localStorage.setItem("tpc_claims",JSON.stringify(claims));localStorage.setItem("tpc_receipts",JSON.stringify(receipts));}
-function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&","<":"<",">":">",'"':""","'":"'"}[c]));}
 function renderParties(){let q=document.getElementById("partySearch").value.toLowerCase(),p=document.getElementById("provinceFilter").value,sort=document.getElementById("partySort").value;let list=parties.filter(x=>(x.name+" "+x.short+" "+(x.leader||"")).toLowerCase().includes(q)&&(!p||x.province===p));list.sort((a,b)=>sort==="az"?a.name.localeCompare(b.name):b.name.localeCompare(a.name));document.getElementById("partyGrid").innerHTML=list.length?list.map(x=>`<article class="card party-card">${x.logo?`<div><img class="party-logo" src="${esc(x.logo)}" alt="${esc(x.short)} logo" loading="lazy" onerror="this.outerHTML='<div class=party-mark>${esc(x.short)}</div>'"><div class="logo-credit">${esc(x.logoCredit||"")}</div></div>`:`<div class="party-mark">${esc(x.short)}</div>`}<div><span class="tag demo">${esc(x.status||"Research required")}</span><h3>${esc(x.name)}</h3><p>${esc(x.summary)}</p></div><div class="card-bottom"><span class="small">${esc(x.province||"Coverage not specified")}</span><button class="btn secondary" onclick="openParty('${esc(x.id)}')">Explore profile ↗</button></div></article>`).join(""):`<div class="empty" style="grid-column:1/-1">No matching party. Try another search.</div>`;}
 function openParty(id){let p=parties.find(x=>x.id===id);if(!p)return;document.getElementById("modalTitle").textContent=p.name;document.getElementById("modalMeta").textContent=`${p.short} · ${p.province||"Coverage not specified"} · ${p.status||"Research required"}`;let sections={Overview:p.summary,Leadership:p.leader||"Leadership details not yet researched and verified.",Candidates:p.candidates||"Candidate lists must be checked against current IEC records for each municipality.",Promises:p.promises,Track_record:p.track,Controversies:p.controversies,Political_exchanges:p.claims,Sources:(p.sources||[]).map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label||s.url)}</a>`).join("<br>")||"No sources added yet."};let tabs=document.getElementById("profileTabs");tabs.innerHTML=Object.keys(sections).map((k,i)=>`<button class="${i===0?"active":""}" data-key="${k}">${k.replaceAll("_"," ")}</button>`).join("");function show(k){document.querySelectorAll("#profileTabs button").forEach(b=>b.classList.toggle("active",b.dataset.key===k));let v=sections[k]||"";document.getElementById("profileContent").innerHTML=`<h3>${k.replaceAll("_"," ")}</h3><p>${v.includes("<a ")?v:esc(v).replace(/\n/g,"<br>")}</p><p class="legal">Editorial status: ${esc(p.status||"Research required")}. Factual content requires a dated source and an update record.</p>`;}tabs.querySelectorAll("button").forEach(b=>b.onclick=()=>show(b.dataset.key));show("Overview");document.getElementById("partyModal").classList.add("open");}
 document.getElementById("modalClose").onclick=()=>document.getElementById("partyModal").classList.remove("open");
@@ -225,13 +261,12 @@ document.getElementById("resetData").onclick=()=>{if(confirm("Reset all locally 
 function renderAll(){renderManifestos();renderParties();renderClaims();renderReceipts();renderAdmin();}
 
 /* ===== ELECTION CENTRE ===== */
-const FEEDS={results:"",news:""}; /* set to your server endpoints, see README comments below */
+const FEEDS={results:"",news:""}; 
 const $=id=>document.getElementById(id);
 const ELECTION_DAY=new Date("2026-11-04T07:00:00+02:00");
 (function(){const d=Math.ceil((ELECTION_DAY-Date.now())/864e5);$("ecCountdown").textContent=d>0?`Polling day Wed 4 Nov 2026 · ${d} day${d==1?"":"s"} to go`:d==0?"Polling day is today (07:00–21:00)":"Counting and results";})();
 document.querySelectorAll("#ecTabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#ecTabs button,.ec-pane").forEach(e=>e.classList.remove("on"));b.classList.add("on");$("ec-"+b.dataset.p).classList.add("on");});
 
-/* Province watch: only figures retrieved from published sources; null = no figure found */
 const PROV=[
 ["Eastern Cape","ANC 62.16%","PMG","ANC 56%","indicative"],
 ["Free State","ANC 51.87%","PMG","DA 41% (ahead of ANC)","small sample, indicative"],
@@ -244,14 +279,12 @@ const PROV=[
 ["Western Cape","DA 53.05%","Citizen","DA 47%, ANC 25%","±5.2"]];
 $("provBody").innerHTML=PROV.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}<br><span class="small">via ${esc(r[2])}, confirm vs IEC</span></td><td>${esc(r[3])}<br><span class="small">${esc(r[4])}</span></td></tr>`).join("");
 
-/* Live results: expects {updatedAt, scope, pctCounted, parties:[{name,votes,pct,seats}]} from YOUR server */
 async function pull(u){const r=await fetch(u,{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);return r.json();}
-function showResults(d){const rows=(d.parties||[]).slice(0,10);$("resBody").innerHTML=`<p class="small"><b>${esc(d.scope||"National")}</b> · ${d.pctCounted!=null?esc(d.pctCounted)+"% of voting districts counted · ":""}IEC data as at ${esc(d.updatedAt||"unknown")}</p><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Party</th><th>Votes</th><th>Share</th><th></th><th>Seats</th></tr></thead><tbody>${rows.map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>${p.votes!=null?Number(p.votes).toLocaleString("en-ZA"):"–"}</td><td>${esc(p.pct)}%</td><td><div class="bar"><i style="width:${Math.min(100,Number(p.pct)||0)}%"></i></div></td><td>${esc(p.seats??"–")}</td></tr>`).join("")}</tbody></table></div>`;}
+function showResults(d){const rows=(d.parties||[]).slice(0,10);$("resBody").innerHTML=`<p class="small"><b>${esc(d.scope||"National")}</b> · ${d.pctCounted!=null?esc(d.pctCounted)+"% of voting districts counted ·  ":""}IEC data as at ${esc(d.updatedAt||"unknown")}</p><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Party</th><th>Votes</th><th>Share</th><th></th><th>Seats</th></tr></thead><tbody>${rows.map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>${p.votes!=null?Number(p.votes).toLocaleString("en-ZA"):"–"}</td><td>${esc(p.pct)}%</td><td><div class="bar"><i style="width:${Math.min(100,Number(p.pct)||0)}%"></i></div></td><td>${esc(p.seats??"–")}</td></tr>`).join("")}</tbody></table></div>`;}
 async function refreshResults(){if(!FEEDS.results){$("resBody").innerHTML='<div class="notice">Results go live after voting stations close on 4 November. This panel will fill automatically once the results endpoint is connected. Until then, the official IEC dashboard (button below) is the source of record.</div>';return;}
  try{showResults(await pull(FEEDS.results));}catch(e){$("resBody").innerHTML=`<div class="notice">Our results feed is not responding (${esc(e.message)}). Use the official IEC dashboard below. We will not show numbers we cannot source.</div>`;}}
 $("resRefresh").onclick=refreshResults;refreshResults();setInterval(refreshResults,60000);
 
-/* News wire: expects [{title,link,source,publishedAt}] from YOUR server; seed items below were verified 1 Nov 2026 */
 const NEWS_SEED=[
 {title:"IEC set to launch national results centre ahead of local government elections",source:"Bona",publishedAt:"2026-10-28",link:"https://www.bona.co.za/mzansi-matters/iec-set-to-launch-national-results-centre-ahead-of-local-government-elections/"},
 {title:"ELECTIONS: How the IEC counts, captures and verifies votes",source:"Sunday World",publishedAt:"",link:"https://sundayworld.co.za/politics/local/elections-how-the-iec-counts-captures-and-verifies-votes/"},
@@ -261,7 +294,6 @@ function showNews(list,seed){$("newsBody").innerHTML=(seed?'<div class="notice">
 (async function(){if(!FEEDS.news)return showNews(NEWS_SEED,true);try{showNews(await pull(FEEDS.news),false);}catch(e){showNews(NEWS_SEED,true);}})();
 setInterval(async()=>{if(FEEDS.news)try{showNews(await pull(FEEDS.news),false)}catch(e){}},120000);
 
-/* Evidence locker */
 let evidence=load("tpc_evidence",[]);
 function ytId(u){try{const x=new URL(u);if(x.hostname=="youtu.be")return x.pathname.slice(1);if(/youtube\.com$/.test(x.hostname))return x.searchParams.get("v")||(x.pathname.match(/\/(embed|shorts|live)\/([\w-]{11})/)||[])[2]||"";}catch(e){}return"";}
 function renderEvidence(){$("evList").innerHTML=evidence.length?evidence.map((v,i)=>{const id=ytId(v.url);return `<article class="card"><span class="lbl ${/Unverified/.test(v.status)?"unv":"off"}">${esc(v.status)}</span><h3>${esc(v.title)}</h3><p class="small">${esc(v.who)}</p>${id?`<div class="vid"><iframe src="https://www.youtube-nocookie.com/embed/${esc(id)}?start=${Number(v.t)||0}" title="${esc(v.title)}" loading="lazy" allowfullscreen></iframe></div>`:'<div class="notice">Could not read a video ID from that link.</div>'}<p>${esc(v.note)}</p><a href="${esc(v.url)}" target="_blank" rel="noopener">Original on YouTube ↗</a> <button class="btn danger" onclick="evidence.splice(${i},1);localStorage.setItem('tpc_evidence',JSON.stringify(evidence));renderEvidence()">Remove</button></article>`}).join(""):'<div class="empty" style="grid-column:1/-1">No evidence items yet. Add one from an official channel above.</div>';}
@@ -273,15 +305,83 @@ renderEvidence();
 function renderManifestos(){const t=document.getElementById("manTag").value,list=parties.filter(p=>p.man);document.getElementById("manCount").textContent=list.length+" parties";
  document.getElementById("manGrid").innerHTML=list.map(p=>{const m=p.man,pts=m.pts.filter(x=>!t||x[1]===t);if(!pts.length)return"";return `<article class="card"><span class="tag">${esc(m.short)}</span><h3>${esc(m.title)}</h3><p class="small">${esc(m.name)} · Launched ${esc(m.launched)}${m.leader?" · "+esc(m.leader):""}</p><ul style="padding-left:18px">${pts.map(x=>`<li>${esc(x[0])}<span class="small"> · ${TAGS[x[1]]}</span></li>`).join("")}</ul><p class="small">Sources: ${lk(m.src)}</p>${m.official?`<p><a href="${esc(m.official)}" target="_blank" rel="noopener">Read the party's full manifesto ↗</a></p>`:'<p class="small">Party document link not yet added.</p>'}<button class="btn secondary" onclick="openParty('${esc(p.id)}')">Open profile ↗</button></article>`}).join("")||'<div class="empty" style="grid-column:1/-1">No party in this set has a point on that issue yet.</div>';}
 
-/* ===== CANDIDATE SEARCH (IndexedDB) ===== */
+/* ===== CANDIDATE SEARCH (IndexedDB & AI Integration) ===== */
 let CANDS=[];
 function idb(){return new Promise((res,rej)=>{const r=indexedDB.open("tpc",1);r.onupgradeneeded=()=>r.result.createObjectStore("cand",{autoIncrement:true});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
 async function candSave(rows){const db=await idb();return new Promise((res,rej)=>{const tx=db.transaction("cand","readwrite"),st=tx.objectStore("cand");st.clear();rows.forEach(r=>st.add(r));tx.oncomplete=res;tx.onerror=()=>rej(tx.error);});}
 async function candLoad(){try{const db=await idb();return await new Promise(res=>{const q=db.transaction("cand").objectStore("cand").getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([]);});}catch(e){return[];}}
 function parseCSV(t){const rows=[];let r=[],f="",q=false;for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}else if(c=='"')q=true;else if(c==","||c==";"||c=="\t"){r.push(f);f=""}else if(c=="\n"){r.push(f);rows.push(r);r=[];f=""}else if(c!="\r")f+=c}if(f||r.length){r.push(f);rows.push(r)}return rows;}
 function mapCands(rows){const h=rows[0].map(x=>x.toLowerCase().trim());const ix=re=>h.findIndex(x=>re.test(x));const ip=ix(/party/),im=ix(/municip/),iw=ix(/ward|list|type/);const inm=h.map((x,i)=>/name|surname|candidate/.test(x)&&!/party|municip|ward/.test(x)?i:-1).filter(i=>i>=0);if(ip<0||!inm.length)throw Error("Could not find party and name columns. Headers found: "+rows[0].join(", "));return rows.slice(1).filter(r=>r.length>1).map(r=>[inm.map(i=>r[i]).join(" ").trim(),r[ip]||"",im>=0?r[im]||"":"",iw>=0?r[iw]||"":""]);}
-function renderCands(){const a=document.getElementById("cqName").value.toLowerCase(),b=document.getElementById("cqParty").value.toLowerCase(),c=document.getElementById("cqMuni").value.toLowerCase();const body=document.getElementById("candBody");if(!CANDS.length){body.innerHTML='<tr><td colspan="4" class="small">No candidate list imported yet.</td></tr>';return;}if(!(a||b||c)){body.innerHTML=`<tr><td colspan="4" class="small">${CANDS.length.toLocaleString("en-ZA")} candidates loaded. Type to search.</td></tr>`;return;}const out=[];for(const r of CANDS){if((!a||r[0].toLowerCase().includes(a))&&(!b||r[1].toLowerCase().includes(b))&&(!c||r[2].toLowerCase().includes(c))){out.push(r);if(out.length>=100)break;}}body.innerHTML=out.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${/^\d{1,4}$/.test(r[3])?"PR list position "+esc(r[3]):"Ward "+esc(r[3])}</td></tr>`).join("")||'<tr><td colspan="4" class="small">No match (showing up to 100 results).</td></tr>';}
-["cqName","cqParty","cqMuni"].forEach(id=>document.getElementById(id).addEventListener("input",renderCands));
+
+function renderCands(){
+  const muniQuery = document.getElementById("cqMuni").value.toLowerCase().trim();
+  const partyQuery = document.getElementById("cqParty").value.toLowerCase().trim();
+  const nameQuery = document.getElementById("cqName").value.toLowerCase().trim();
+  const body = document.getElementById("candBody");
+  
+  if(!CANDS.length){
+    body.innerHTML='<tr><td colspan="4" class="small">No candidate list imported yet.</td></tr>';
+    return;
+  }
+  
+  if(!muniQuery && !partyQuery && !nameQuery){
+    body.innerHTML=`<tr><td colspan="4" class="small">${CANDS.length.toLocaleString("en-ZA")} candidates loaded. Enter a municipality or party above to view records.</td></tr>`;
+    return;
+  }
+
+  const out=[];
+  for(const r of CANDS){
+    const candName = r[0].toLowerCase();
+    const candParty = r[1].toLowerCase();
+    const candMuni = r[2].toLowerCase();
+
+    const matchesMuni = !muniQuery || candMuni.includes(muniQuery);
+    const matchesParty = !partyQuery || candParty.includes(partyQuery);
+    const matchesName = !nameQuery || candName.includes(nameQuery);
+
+    if(matchesMuni && matchesParty && matchesName){
+      out.push(r);
+      if(out.length>=150)break; 
+    }
+  }
+
+  body.innerHTML = out.length ? out.map(r=>`<tr><td>${esc(r[0])}</td><td><b>${esc(r[1])}</b></td><td>${esc(r[2])}</td><td>${/^\d{1,4}$/.test(r[3])?"PR list position "+esc(r[3]):"Ward "+esc(r[3])}</td></tr>`).join("") : '<tr><td colspan="4" class="small">No matching candidates found for this selection.</td></tr>';
+}
+
+["cqMuni","cqParty","cqName"].forEach(id=>document.getElementById(id).addEventListener("input",renderCands));
+
+// AI Assistant Feature Implementation for Candidate Search
+document.getElementById("aiRunBtn").onclick = () => {
+  const promptText = document.getElementById("aiPromptInput").value.toLowerCase();
+  if(!promptText) return;
+  
+  const partiesList = ["anc", "da", "eff", "mk", "ifp", "actionsa", "pa", "ff+", "udm", "acdp"];
+  let detectedParty = "";
+  for(let p of partiesList) {
+    if(promptText.includes(p)) { detectedParty = p.toUpperCase(); break; }
+  }
+  if(promptText.includes("democratic alliance")) detectedParty = "DEMOCRATIC ALLIANCE";
+  if(promptText.includes("african national congress")) detectedParty = "AFRICAN NATIONAL CONGRESS";
+  if(promptText.includes("economic freedom fighters")) detectedParty = "ECONOMIC FREEDOM FIGHTERS";
+
+  let detectedMuni = "";
+  if(promptText.includes("buffalo city") || promptText.includes("buf")) detectedMuni = "Buffalo City";
+  else if(promptText.includes("sarah baartman") || promptText.includes("dc10")) detectedMuni = "Sarah Baartman";
+  else if(promptText.includes("amathole") || promptText.includes("dc12")) detectedMuni = "Amathole";
+  else if(promptText.includes("chris hani") || promptText.includes("dc13")) detectedMuni = "Chris Hani";
+  else if(promptText.includes("joe gqabi") || promptText.includes("dc14")) detectedMuni = "Joe Gqabi";
+  else if(promptText.includes("or tambo") || promptText.includes("dc15")) detectedMuni = "OR Tambo";
+  else {
+    let clean = promptText.replace(/show|me|candidates|candidate|for|the|in|all|party/g,"").trim();
+    if(detectedParty) clean = clean.replace(detectedParty.toLowerCase(),"").trim();
+    if(clean.length > 2) detectedMuni = clean.charAt(0).toUpperCase() + clean.slice(1);
+  }
+
+  if(detectedMuni) document.getElementById("cqMuni").value = detectedMuni;
+  if(detectedParty) document.getElementById("cqParty").value = detectedParty;
+  renderCands();
+};
+
 document.getElementById("candFile").onchange=async e=>{const f=e.target.files[0];if(!f)return;const st=document.getElementById("candStatus");st.textContent="Reading file...";try{CANDS=mapCands(parseCSV(await f.text()));await candSave(CANDS);st.textContent=CANDS.length.toLocaleString("en-ZA")+" candidates imported and saved in this browser.";renderCands();}catch(err){st.textContent="Import failed: "+err.message;}};
 candLoad().then(r=>{CANDS=r;if(r.length)document.getElementById("candStatus").textContent=r.length.toLocaleString("en-ZA")+" candidates loaded from this browser.";renderCands();});
 
