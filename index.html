@@ -19,7 +19,6 @@
 .tbl-wrap{overflow-x:auto}.bar{height:10px;background:#2b2b2b;min-width:90px}.bar i{display:block;height:100%;background:var(--yellow)}
 .lbl{display:inline-block;font-size:.62rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;padding:2px 6px;margin-right:6px}.lbl.off{background:var(--green);color:#111}.lbl.poll{background:var(--yellow);color:#111}.lbl.rep{background:#555;color:#fff}.lbl.unv{background:var(--red);color:#fff}
 .news-item{border-bottom:1px solid var(--line);padding:11px 0}.news-item b{display:block}.vid{position:relative;padding-top:56.25%;background:#000;margin:10px 0}.vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.party-logo{width:64px;height:64px;object-fit:contain;background:#fff;padding:4px}.logo-credit{font-size:.6rem;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -135,7 +134,7 @@
       <input class="field" name="leader" placeholder="Leader (with source)">
       <input class="field" name="province" placeholder="Province or national">
       <input class="field full" name="summary" placeholder="Plain-English overview">
-      <input class="field full" name="source" type="url" placeholder="Source URL (required for factual claims)"><input class="field" name="logo" type="url" placeholder="Logo image URL (licensed or permitted)"><input class="field" name="logoCredit" placeholder="Logo credit / permission note">
+      <input class="field full" name="source" type="url" placeholder="Source URL (required for factual claims)">
       <button class="btn full" type="submit">Save party profile</button>
     </form>
     <h3>Current entries</h3><div id="adminList" class="admin-list"></div>
@@ -148,9 +147,7 @@
 <div class="modal-backdrop" id="partyModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal"><button class="close" id="modalClose" aria-label="Close profile">✕ CLOSE</button><span class="tag demo">Profile / research status</span><h2 id="modalTitle"></h2><div id="modalMeta" class="small"></div><div class="tabs" id="profileTabs"></div><div class="modal-content" id="profileContent"></div></div></div>
 
 <script>
-
 const U={tl:"https://www.timeslive.co.za/politics/2026-08-23-anc-unveils-6-point-plan-for-2026-local-elections/",bdI:"https://www.businessday.co.za/news/2026-08-23-elections-2026-anc-vows-to-insource-municipal-services-cut-tenderpreneurs/",dmA:"https://dailymaverick.co.za/article/2026-08-23-clock-it-anc-reheats-old-election-promises-in-2026-manifesto",enA:"https://enca.com/news-top-stories/broken-services-accountability-ancs-manifesto-promises-municipal-renewal",bdD:"https://www.businessday.co.za/politics/2026-08-08-da-promises-ordinary-life-as-hill-lewis-puts-municipalities-at-heart-of-election-pitch/",stD:"https://sundaytribune.co.za/news/2026-08-09-das-bold-manifesto-tackling-corruption-and-improving-municipal-governance/",bdP:"https://www.businessday.co.za/politics/2026-08-08-da-plans-to-allow-private-sector-firms-to-provide-municipal-services/",daP:"https://www.da.org.za/policy/2026-local-government-manifesto",ewE:"https://www.ewn.co.za/malema-promises-direct-municipal-insourcing-at-eff-manifesto-launch/",ioE:"https://iol.co.za/news/politics/2026-07-30-eff-promises-24-hour-water-leak-repairs-and-free-basic-services-in-election-pitch/",dmE:"https://www.dailymaverick.co.za/article/2026-07-26-eff-celebrates-13-years-with-manifesto-focused-on-youth-issues-and-basic-services/",enI:"https://www.enca.com/news-top-stories-videos/ifp-puts-water-heart-election-plan",ewI:"https://www.ewn.co.za/ifp-says-its-fileding-young-people-ahead-of-local-govt-elections/",dmI:"https://dailymaverick.co.za/article/2026-10-05-manifesto-test-ifp-offers-more-financial-support-for-traditional-leaders",bkA:"https://briefly.co.za/politics/254307-actionsa-launches-election-manifesto-crime-law-enforcement-centre/",enAs:"https://www.enca.com/news/basic-service-delivery-not-enough-actionsa",ewA:"https://ewn.co.za/2026/09/26/actionsa-vows-to-turn-dreams-of-south-africans-into-action-in-election-manifesto",dmPA:"https://dailymaverick.co.za/article/2026-10-18-pa-promises-debt-write-offs-and-a-3-month-rates-holiday",poFF:"https://www.polity.org.za/article/vf-plus-municipal-elections-manifesto-2026-2026-09-15",sbFF:"https://www.sabcnews.com/sabcnews/ff-plus-puts-municipal-reform-at-the-heart-of-election-manifesto/",bkFF:"https://briefly.co.za/politics/253211-ff-rules-coalitions-eff-mk-party-pac-november-elections/",poMK:"https://www.polity.org.za/article/mkp-the-peoples-mandate-2026-local-government-election-2026-10-20",bdMK:"https://www.businessday.co.za/politics/2026-10-26-news-analysis-mk-party-gains-in-kzn-would-test-zumas-promise-to-fix-local-government/",ioMK:"https://www.iol.co.za/news/politics/bongani-baloyi-named-mk-partys-joburg-candidate-as-other-metro-contenders-unveiled-c27f888e-98d0-4958-b99d-ca0bf3c7d1d9",dmUDM:"https://www.dailymaverick.co.za/article/2026-09-04-manifesto-test-udm-promises-to-maintain-maintain-maintain",gov:"https://www.gov.za/news/media-statements/electoral-commission-certifies-136-790-candidates-contest-2026-local",tlW:"https://www.timeslive.co.za/politics/2026-09-18-certified-this-party-has-a-candidate-in-all-4485-wards/",dmX:"https://dailymaverick.co.za/article/2026-09-16-iec-finalises-ballot-while-anc-faces-exclusion-in-six-municipalities/",bdX:"https://www.businessday.co.za/news/2026-09-16-anc-to-appeal-electoral-court-ruling-as-iec-finalises-candidate-lists/",afc:"https://www.polity.org.za/article/what-south-africas-major-parties-are-promising-voters-in-the-2026-local-elections-2026-09-25"};
-/* points: [text, tag]  tags: svc=water/electricity/roads, gov=governance & corruption, job=jobs & economy, saf=crime & safety, hou=housing & land, mon=billing, debt & rates */
 const MAN=[
 {id:"anc",name:"African National Congress",short:"ANC",leader:"Cyril Ramaphosa (president)",title:"Masakhe: Let Us Build",launched:"23 Aug 2026, Diepsloot, Gauteng",official:"",
  pts:[["Six action areas with delivery deadlines ranging from 100 days to five years","gov"],["Every ANC local representative to sign a public performance agreement and a code of ethical conduct, with a tracking mechanism so councillors account for delivery","gov"],["Ring-fence electricity revenue for maintenance; minister Ramokgopa mentioned an expected 8% budget allocation","svc"],["Digitise municipal business services and speed up planning approvals within five years","job"],["A monitored camera and lighting plan for every identified crime hotspot","saf"],["Insource municipal services and curb tenderpreneur contracts","gov"]],
@@ -205,33 +202,45 @@ const starterReceipts = [];
 let parties = load("tpc_parties3",starterParties), claims = load("tpc_claims",starterClaims), receipts = load("tpc_receipts",starterReceipts);
 function load(k,fallback){try{const v=localStorage.getItem(k);return v?JSON.parse(v):fallback.map(x=>({...x}));}catch(e){return fallback.map(x=>({...x}));}}
 function save(){localStorage.setItem("tpc_parties3",JSON.stringify(parties));localStorage.setItem("tpc_claims",JSON.stringify(claims));localStorage.setItem("tpc_receipts",JSON.stringify(receipts));}
-function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-function renderParties(){let q=document.getElementById("partySearch").value.toLowerCase(),p=document.getElementById("provinceFilter").value,sort=document.getElementById("partySort").value;let list=parties.filter(x=>(x.name+" "+x.short+" "+(x.leader||"")).toLowerCase().includes(q)&&(!p||x.province===p));list.sort((a,b)=>sort==="az"?a.name.localeCompare(b.name):b.name.localeCompare(a.name));document.getElementById("partyGrid").innerHTML=list.length?list.map(x=>`<article class="card party-card">${x.logo?`<div><img class="party-logo" src="${esc(x.logo)}" alt="${esc(x.short)} logo" loading="lazy" onerror="this.outerHTML='<div class=party-mark>${esc(x.short)}</div>'"><div class="logo-credit">${esc(x.logoCredit||"")}</div></div>`:`<div class="party-mark">${esc(x.short)}</div>`}<div><span class="tag demo">${esc(x.status||"Research required")}</span><h3>${esc(x.name)}</h3><p>${esc(x.summary)}</p></div><div class="card-bottom"><span class="small">${esc(x.province||"Coverage not specified")}</span><button class="btn secondary" onclick="openParty('${esc(x.id)}')">Explore profile ↗</button></div></article>`).join(""):`<div class="empty" style="grid-column:1/-1">No matching party. Try another search.</div>`;}
+function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&","<":"<",">":">",'"':""","'":"'"}[c]));}
+
+function renderParties(){
+  let q=document.getElementById("partySearch").value.toLowerCase(),p=document.getElementById("provinceFilter").value,sort=document.getElementById("partySort").value;
+  let list=parties.filter(x=>(x.name+" "+x.short+" "+(x.leader||"")).toLowerCase().includes(q)&&(!p||x.province===p));
+  list.sort((a,b)=>sort==="az"?a.name.localeCompare(b.name):b.name.localeCompare(a.name));
+  document.getElementById("partyGrid").innerHTML=list.length?list.map(x=>`<article class="card party-card"><div class="party-mark">${esc(x.short)}</div><div><span class="tag demo">${esc(x.status||"Research required")}</span><h3>${esc(x.name)}</h3><p>${esc(x.summary)}</p></div><div class="card-bottom"><span class="small">${esc(x.province||"Coverage not specified")}</span><button class="btn secondary" onclick="openParty('${esc(x.id)}')">Explore profile ↗</button></div></article>`).join(""):`<div class="empty" style="grid-column:1/-1">No matching party. Try another search.</div>`;
+}
+
 function openParty(id){let p=parties.find(x=>x.id===id);if(!p)return;document.getElementById("modalTitle").textContent=p.name;document.getElementById("modalMeta").textContent=`${p.short} · ${p.province||"Coverage not specified"} · ${p.status||"Research required"}`;let sections={Overview:p.summary,Leadership:p.leader||"Leadership details not yet researched and verified.",Candidates:p.candidates||"Candidate lists must be checked against current IEC records for each municipality.",Promises:p.promises,Track_record:p.track,Controversies:p.controversies,Political_exchanges:p.claims,Sources:(p.sources||[]).map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label||s.url)}</a>`).join("<br>")||"No sources added yet."};let tabs=document.getElementById("profileTabs");tabs.innerHTML=Object.keys(sections).map((k,i)=>`<button class="${i===0?"active":""}" data-key="${k}">${k.replaceAll("_"," ")}</button>`).join("");function show(k){document.querySelectorAll("#profileTabs button").forEach(b=>b.classList.toggle("active",b.dataset.key===k));let v=sections[k]||"";document.getElementById("profileContent").innerHTML=`<h3>${k.replaceAll("_"," ")}</h3><p>${v.includes("<a ")?v:esc(v).replace(/\n/g,"<br>")}</p><p class="legal">Editorial status: ${esc(p.status||"Research required")}. Factual content requires a dated source and an update record.</p>`;}tabs.querySelectorAll("button").forEach(b=>b.onclick=()=>show(b.dataset.key));show("Overview");document.getElementById("partyModal").classList.add("open");}
 document.getElementById("modalClose").onclick=()=>document.getElementById("partyModal").classList.remove("open");
 document.getElementById("partyModal").onclick=e=>{if(e.target.id==="partyModal")e.currentTarget.classList.remove("open")};
 document.addEventListener("keydown",e=>{if(e.key==="Escape")document.getElementById("partyModal").classList.remove("open")});
-["partySearch","provinceFilter","partySort"].forEach(id=>document.getElementById(id).addEventListener("input",renderParties));
+
+let searchTimer;
+["partySearch","provinceFilter","partySort"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{
+  clearTimeout(searchTimer);
+  searchTimer=setTimeout(renderParties, 150);
+}));
+
 function renderClaims(){document.getElementById("claimsList").innerHTML=claims.map(c=>`<article class="card"><span class="tag">Claim</span><h3>${esc(c.title)}</h3><p><b>What was said:</b> ${esc(c.claim)}</p><p><b>Response:</b> ${esc(c.response)}</p><p><b>Evidence check:</b> ${esc(c.evidence)}</p>${c.source?`<a href="${esc(c.source)}" target="_blank" rel="noopener">Original source ↗</a>`:"<span class='small'>Source not yet added</span>"}</article>`).join("")||`<div class="empty">No entries yet.</div>`;}
 function renderReceipts(){let f=document.getElementById("statusFilter").value;let list=receipts.filter(r=>!f||r.status===f);document.getElementById("receiptsList").innerHTML=list.length?list.map(r=>`<article class="card"><span class="tag">${esc(r.status)}</span><h3>${esc(r.person)}</h3><p><b>Affiliation at relevant time:</b> ${esc(r.party)}</p><p>${esc(r.detail)}</p><p><b>Outcome / response:</b> ${esc(r.outcome||"Not recorded")}</p>${r.source?`<a href="${esc(r.source)}" target="_blank" rel="noopener">Source ↗</a>`:"<span class='small'>Source required</span>"}</article>`).join(""):`<div class="empty" style="grid-column:1/-1">No records in this classification. This is not a claim that no matters exist.</div>`;}
 document.getElementById("statusFilter").onchange=renderReceipts;
 document.getElementById("adminToggle").onclick=()=>document.getElementById("adminPanel").classList.toggle("open");
 function renderAdmin(){document.getElementById("adminList").innerHTML=parties.map(p=>`<div class="admin-row"><span><b>${esc(p.name)}</b><br><small>${esc(p.status||"Research required")}</small></span><button class="btn danger" onclick="deleteParty('${esc(p.id)}')">Delete</button></div>`).join("")||"No party entries.";}
 function deleteParty(id){if(confirm("Delete this party profile from this browser?")){parties=parties.filter(p=>p.id!==id);save();renderAll();}}
-document.getElementById("partyForm").onsubmit=e=>{e.preventDefault();let d=Object.fromEntries(new FormData(e.target));let id="party-"+Date.now();parties.push({id,logo:d.logo||"",logoCredit:d.logoCredit||"",name:d.name,short:d.short,leader:d.leader,province:d.province||"National",summary:d.summary||"Overview pending.",promises:"Manifesto research pending.",track:"Track record research pending.",candidates:"Candidate verification pending.",claims:"No sourced exchanges entered.",controversies:"No legal or controversy records entered.",sources:d.source?[{label:"Submitted source",url:d.source}]:[],status:"Needs source verification"});save();e.target.reset();renderAll();};
+document.getElementById("partyForm").onsubmit=e=>{e.preventDefault();let d=Object.fromEntries(new FormData(e.target));let id="party-"+Date.now();parties.push({id,name:d.name,short:d.short,leader:d.leader,province:d.province||"National",summary:d.summary||"Overview pending.",promises:"Manifesto research pending.",track:"Track record research pending.",candidates:"Candidate verification pending.",claims:"No sourced exchanges entered.",controversies:"No legal or controversy records entered.",sources:d.source?[{label:"Submitted source",url:d.source}]:[],status:"Needs source verification"});save();e.target.reset();renderAll();};
 document.getElementById("exportData").onclick=()=>{let blob=new Blob([JSON.stringify({parties,claims,receipts},null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="political-circus-content.json";a.click();URL.revokeObjectURL(a.href);};
 document.getElementById("importFile").onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let d=JSON.parse(await f.text());if(!Array.isArray(d.parties))throw Error("Missing parties array");parties=d.parties;claims=Array.isArray(d.claims)?d.claims:[];receipts=Array.isArray(d.receipts)?d.receipts:[];save();renderAll();alert("Content imported into this browser.");}catch(err){alert("Could not import: "+err.message)}e.target.value="";};
 document.getElementById("resetData").onclick=()=>{if(confirm("Reset all locally saved content to the original starter directory?")){parties=starterParties.map(x=>({...x}));claims=starterClaims.map(x=>({...x}));receipts=[];save();renderAll();}};
 function renderAll(){renderManifestos();renderParties();renderClaims();renderReceipts();renderAdmin();}
 
 /* ===== ELECTION CENTRE ===== */
-const FEEDS={results:"",news:""}; /* set to your server endpoints, see README comments below */
+const FEEDS={results:"",news:""};
 const $=id=>document.getElementById(id);
 const ELECTION_DAY=new Date("2026-11-04T07:00:00+02:00");
 (function(){const d=Math.ceil((ELECTION_DAY-Date.now())/864e5);$("ecCountdown").textContent=d>0?`Polling day Wed 4 Nov 2026 · ${d} day${d==1?"":"s"} to go`:d==0?"Polling day is today (07:00–21:00)":"Counting and results";})();
 document.querySelectorAll("#ecTabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#ecTabs button,.ec-pane").forEach(e=>e.classList.remove("on"));b.classList.add("on");$("ec-"+b.dataset.p).classList.add("on");});
 
-/* Province watch: only figures retrieved from published sources; null = no figure found */
 const PROV=[
 ["Eastern Cape","ANC 62.16%","PMG","ANC 56%","indicative"],
 ["Free State","ANC 51.87%","PMG","DA 41% (ahead of ANC)","small sample, indicative"],
@@ -244,14 +253,12 @@ const PROV=[
 ["Western Cape","DA 53.05%","Citizen","DA 47%, ANC 25%","±5.2"]];
 $("provBody").innerHTML=PROV.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}<br><span class="small">via ${esc(r[2])}, confirm vs IEC</span></td><td>${esc(r[3])}<br><span class="small">${esc(r[4])}</span></td></tr>`).join("");
 
-/* Live results: expects {updatedAt, scope, pctCounted, parties:[{name,votes,pct,seats}]} from YOUR server */
 async function pull(u){const r=await fetch(u,{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status);return r.json();}
 function showResults(d){const rows=(d.parties||[]).slice(0,10);$("resBody").innerHTML=`<p class="small"><b>${esc(d.scope||"National")}</b> · ${d.pctCounted!=null?esc(d.pctCounted)+"% of voting districts counted · ":""}IEC data as at ${esc(d.updatedAt||"unknown")}</p><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Party</th><th>Votes</th><th>Share</th><th></th><th>Seats</th></tr></thead><tbody>${rows.map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>${p.votes!=null?Number(p.votes).toLocaleString("en-ZA"):"–"}</td><td>${esc(p.pct)}%</td><td><div class="bar"><i style="width:${Math.min(100,Number(p.pct)||0)}%"></i></div></td><td>${esc(p.seats??"–")}</td></tr>`).join("")}</tbody></table></div>`;}
 async function refreshResults(){if(!FEEDS.results){$("resBody").innerHTML='<div class="notice">Results go live after voting stations close on 4 November. This panel will fill automatically once the results endpoint is connected. Until then, the official IEC dashboard (button below) is the source of record.</div>';return;}
  try{showResults(await pull(FEEDS.results));}catch(e){$("resBody").innerHTML=`<div class="notice">Our results feed is not responding (${esc(e.message)}). Use the official IEC dashboard below. We will not show numbers we cannot source.</div>`;}}
 $("resRefresh").onclick=refreshResults;refreshResults();setInterval(refreshResults,60000);
 
-/* News wire: expects [{title,link,source,publishedAt}] from YOUR server; seed items below were verified 1 Nov 2026 */
 const NEWS_SEED=[
 {title:"IEC set to launch national results centre ahead of local government elections",source:"Bona",publishedAt:"2026-10-28",link:"https://www.bona.co.za/mzansi-matters/iec-set-to-launch-national-results-centre-ahead-of-local-government-elections/"},
 {title:"ELECTIONS: How the IEC counts, captures and verifies votes",source:"Sunday World",publishedAt:"",link:"https://sundayworld.co.za/politics/local/elections-how-the-iec-counts-captures-and-verifies-votes/"},
@@ -261,7 +268,6 @@ function showNews(list,seed){$("newsBody").innerHTML=(seed?'<div class="notice">
 (async function(){if(!FEEDS.news)return showNews(NEWS_SEED,true);try{showNews(await pull(FEEDS.news),false);}catch(e){showNews(NEWS_SEED,true);}})();
 setInterval(async()=>{if(FEEDS.news)try{showNews(await pull(FEEDS.news),false)}catch(e){}},120000);
 
-/* Evidence locker */
 let evidence=load("tpc_evidence",[]);
 function ytId(u){try{const x=new URL(u);if(x.hostname=="youtu.be")return x.pathname.slice(1);if(/youtube\.com$/.test(x.hostname))return x.searchParams.get("v")||(x.pathname.match(/\/(embed|shorts|live)\/([\w-]{11})/)||[])[2]||"";}catch(e){}return"";}
 function renderEvidence(){$("evList").innerHTML=evidence.length?evidence.map((v,i)=>{const id=ytId(v.url);return `<article class="card"><span class="lbl ${/Unverified/.test(v.status)?"unv":"off"}">${esc(v.status)}</span><h3>${esc(v.title)}</h3><p class="small">${esc(v.who)}</p>${id?`<div class="vid"><iframe src="https://www.youtube-nocookie.com/embed/${esc(id)}?start=${Number(v.t)||0}" title="${esc(v.title)}" loading="lazy" allowfullscreen></iframe></div>`:'<div class="notice">Could not read a video ID from that link.</div>'}<p>${esc(v.note)}</p><a href="${esc(v.url)}" target="_blank" rel="noopener">Original on YouTube ↗</a> <button class="btn danger" onclick="evidence.splice(${i},1);localStorage.setItem('tpc_evidence',JSON.stringify(evidence));renderEvidence()">Remove</button></article>`}).join(""):'<div class="empty" style="grid-column:1/-1">No evidence items yet. Add one from an official channel above.</div>';}
@@ -281,7 +287,13 @@ async function candLoad(){try{const db=await idb();return await new Promise(res=
 function parseCSV(t){const rows=[];let r=[],f="",q=false;for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}else if(c=='"')q=true;else if(c==","||c==";"||c=="\t"){r.push(f);f=""}else if(c=="\n"){r.push(f);rows.push(r);r=[];f=""}else if(c!="\r")f+=c}if(f||r.length){r.push(f);rows.push(r)}return rows;}
 function mapCands(rows){const h=rows[0].map(x=>x.toLowerCase().trim());const ix=re=>h.findIndex(x=>re.test(x));const ip=ix(/party/),im=ix(/municip/),iw=ix(/ward|list|type/);const inm=h.map((x,i)=>/name|surname|candidate/.test(x)&&!/party|municip|ward/.test(x)?i:-1).filter(i=>i>=0);if(ip<0||!inm.length)throw Error("Could not find party and name columns. Headers found: "+rows[0].join(", "));return rows.slice(1).filter(r=>r.length>1).map(r=>[inm.map(i=>r[i]).join(" ").trim(),r[ip]||"",im>=0?r[im]||"":"",iw>=0?r[iw]||"":""]);}
 function renderCands(){const a=document.getElementById("cqName").value.toLowerCase(),b=document.getElementById("cqParty").value.toLowerCase(),c=document.getElementById("cqMuni").value.toLowerCase();const body=document.getElementById("candBody");if(!CANDS.length){body.innerHTML='<tr><td colspan="4" class="small">No candidate list imported yet.</td></tr>';return;}if(!(a||b||c)){body.innerHTML=`<tr><td colspan="4" class="small">${CANDS.length.toLocaleString("en-ZA")} candidates loaded. Type to search.</td></tr>`;return;}const out=[];for(const r of CANDS){if((!a||r[0].toLowerCase().includes(a))&&(!b||r[1].toLowerCase().includes(b))&&(!c||r[2].toLowerCase().includes(c))){out.push(r);if(out.length>=100)break;}}body.innerHTML=out.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${/^\d{1,4}$/.test(r[3])?"PR list position "+esc(r[3]):"Ward "+esc(r[3])}</td></tr>`).join("")||'<tr><td colspan="4" class="small">No match (showing up to 100 results).</td></tr>';}
-["cqName","cqParty","cqMuni"].forEach(id=>document.getElementById(id).addEventListener("input",renderCands));
+
+let candSearchTimer;
+["cqName","cqParty","cqMuni"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{
+  clearTimeout(candSearchTimer);
+  candSearchTimer=setTimeout(renderCands, 150);
+}));
+
 document.getElementById("candFile").onchange=async e=>{const f=e.target.files[0];if(!f)return;const st=document.getElementById("candStatus");st.textContent="Reading file...";try{CANDS=mapCands(parseCSV(await f.text()));await candSave(CANDS);st.textContent=CANDS.length.toLocaleString("en-ZA")+" candidates imported and saved in this browser.";renderCands();}catch(err){st.textContent="Import failed: "+err.message;}};
 candLoad().then(r=>{CANDS=r;if(r.length)document.getElementById("candStatus").textContent=r.length.toLocaleString("en-ZA")+" candidates loaded from this browser.";renderCands();});
 
@@ -289,4 +301,5 @@ candLoad().then(r=>{CANDS=r;if(r.length)document.getElementById("candStatus").te
 
 renderAll();
 </script>
-</body></html>
+</body>
+</html>
